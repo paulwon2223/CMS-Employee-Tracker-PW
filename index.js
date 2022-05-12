@@ -13,6 +13,8 @@ const db = mysql.createConnection(
     }
 );
 
+
+
 // asks first question and generates its own functions accordingly
 const initialQuestions = () => {
     inq.prompt([
@@ -37,7 +39,7 @@ const initialQuestions = () => {
         // switch statment to invoke certain function depending on user choice
         switch (userData) {
             case 'View All Employees':
-                // viewEmployee();
+                viewEmployee();
 
             break;
 
@@ -75,6 +77,12 @@ const initialQuestions = () => {
         }
 
     })
+}
+
+const viewEmployee = () => {
+    db.query('SELECT * FROM employees_db', function (err, results) {
+        console.log(results);
+    });
 }
 
 

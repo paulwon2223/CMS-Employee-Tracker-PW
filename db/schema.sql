@@ -1,9 +1,9 @@
 -- creating database --
-DROP DATABASE IF EXISTS employee_db;
-CREATE DATABASE employee_db;
+DROP DATABASE IF EXISTS employees_db;
+CREATE DATABASE employees_db;
 
 -- using the created database --
-USE employee_db;
+USE employees_db;
 
 
 -- creating table called departments --
@@ -38,5 +38,5 @@ CREATE TABLE employee (
 
     FOREIGN KEY (manager_id)
     REFERENCES employee(id)
-    ON DELETE SET NULL,
+    ON DELETE SET NULL
 );

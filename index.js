@@ -13,11 +13,11 @@ const db = mysql.createConnection(
     }
 );
 
-db.connect(function(err){
+db.connect(function(err) {
     if (err) {
         console.error('there is an error', err);
     } else {
-        console.log('Database is connected successfully !')
+        console.log('Database is connected successfully!')
         // invoking main function
         initialQuestions();
     }
@@ -63,7 +63,7 @@ const initialQuestions = () => {
             break;
 
             case 'View All Roles':
-                // viewRoles();
+                viewRoles();
 
             break;
 
@@ -89,13 +89,14 @@ const initialQuestions = () => {
 
 const viewEmployee = () => {
     const sql = "SELECT * FROM employee";
-    db.query(sql, function (err, results) {
+
+    db.query(sql, (err, results) => {
         if (err) {
-            console.log(err);
+            console.error('there is an error', err)
         } else {
-            console.table(results);
+            console.table(results)
         }
-    });
+    })
 };
 
 const addEmployee = () => {
@@ -109,11 +110,36 @@ const addEmployee = () => {
             message: 'Enter last name',
             name: 'lastname',
             type: 'input'
-        },
-        {
-            message: 'Please select role',
-            name: 'firstname',
-            type: 'input'
-        },
-    ])
+        }
+    ]).then((data) => {
+        const firstName = data.firstname;
+        const lastName =data.lastname;
+        
+        // the question marks serve as placeholders
+        const sql = "INSERT INTO employee (first_name, last_name) VALUES (?,?)";
+
+        db.query(sql, [firstName, lastName] ,(err, results) => {
+            if (err) {
+                console.log(err);
+            } else {
+                viewEmployee()
+            }
+        })
+    })
 };
+
+const updateRole = () => {
+
+}
+
+const viewRoles = () => {
+    const sql = "SELECT title FROM employee_role";
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.table(results)
+        }
+    })
+}

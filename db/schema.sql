@@ -6,40 +6,35 @@ CREATE DATABASE employees_db;
 USE employees_db;
 
 
--- creating table called departments --
+-- creating neccessary tables --
 CREATE TABLE departments (
-    id               INT         NOT NULL AUTO_INCREMENT,
-    department_name  VARCHAR(30) NOT NULL,
-    PRIMARY KEY(id)
+    id               INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    department_name  VARCHAR(30) NOT NULL
 );
 
--- creating table called employee_roll --
 CREATE TABLE employee_role (
-    id              INT         NOT NULL AUTO_INCREMENT,
-    title           VARCHAR(30),
+    id              INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    title           VARCHAR(90),
     salary          DECIMAL,
     department_id   INT,
-    PRIMARY KEY(id)
 
-    -- FOREIGN KEY (department_id)
-    -- REFERENCES departments(id)
-    -- ON DELETE SET NULL
+    FOREIGN KEY (department_id)
+    REFERENCES departments(id)
+    ON DELETE SET NULL
 );
 
--- creating table called employee --
 CREATE TABLE employee (
-    id             INT         NOT NULL AUTO_INCREMENT,
+    id             INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     first_name     VARCHAR(30) NOT NULL,   
     last_name      VARCHAR(30) NOT NULL,
     role_id        INT,
     manager_id     INT,
-    PRIMARY KEY(id)
 
-    -- FOREIGN KEY (role_id)
-    -- REFERENCES employee_role(id)
-    -- ON DELETE SET NULL,
+    FOREIGN KEY (role_id)
+    REFERENCES employee_role(id)
+    ON DELETE SET NULL,
 
-    -- FOREIGN KEY (manager_id)
-    -- REFERENCES employee(id)
-    -- ON DELETE SET NULL
+    FOREIGN KEY (manager_id)
+    REFERENCES employee(id)
+    ON DELETE SET NULL
 );

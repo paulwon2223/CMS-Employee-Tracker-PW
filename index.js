@@ -13,13 +13,22 @@ const db = mysql.createConnection(
     }
 );
 
+db.connect(function(err){
+    if (err) {
+        console.error('there is an error', err);
+    } else {
+        console.log('Database is connected successfully !')
+        // invoking main function
+        initialQuestions();
+    }
+});
 
 
 // asks first question and generates its own functions accordingly
 const initialQuestions = () => {
     inq.prompt([
         {
-            message: 'What would you like to do? (use arrow keys)',
+            message: 'What would you like to do?',
             name: 'userChoice',
             type: 'list',
             choices: [
@@ -44,7 +53,7 @@ const initialQuestions = () => {
             break;
 
             case 'Add Employee':
-                // addEmployee();
+                addEmployee();
 
             break;
 
@@ -75,19 +84,36 @@ const initialQuestions = () => {
                 // quit();
             break;
         }
-
     })
-}
+};
 
 const viewEmployee = () => {
-    db.query('SELECT * FROM employees_db', function (err, results) {
-        console.log(results);
+    const sql = "SELECT * FROM employee";
+    db.query(sql, function (err, results) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.table(results);
+        }
     });
-}
+};
 
-
-initialQuestions();
-
-// const viewEmployee = () => {
-//     console.log('yay it also worked');
-// }
+const addEmployee = () => {
+    inq.prompt([
+        {
+            message: 'Enter first name',
+            name: 'firstname',
+            type: 'input'
+        },
+        {
+            message: 'Enter last name',
+            name: 'lastname',
+            type: 'input'
+        },
+        {
+            message: 'Please select role',
+            name: 'firstname',
+            type: 'input'
+        },
+    ])
+};

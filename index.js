@@ -53,7 +53,7 @@ const initialQuestions = () => {
             break;
 
             case 'Add Employee':
-                addEmployee();
+                // addEmployee();
 
             break;
 
@@ -73,7 +73,7 @@ const initialQuestions = () => {
             break;
 
             case 'View All Departments':
-                // viewDepartments();
+                viewDepartments();
             break;
 
             case 'Add Departments':
@@ -81,7 +81,7 @@ const initialQuestions = () => {
             break;
             
             case 'Quit':
-                // quit();
+                quit();
             break;
         }
     })
@@ -95,6 +95,7 @@ const viewEmployee = () => {
             console.error('there is an error', err)
         } else {
             console.table(results)
+            initialQuestions();
         }
     })
 };
@@ -102,27 +103,59 @@ const viewEmployee = () => {
 const addEmployee = () => {
     inq.prompt([
         {
-            message: 'Enter first name',
+            message: 'Enter employee first name',
             name: 'firstname',
             type: 'input'
         },
         {
-            message: 'Enter last name',
+            message: 'Enter employee last name',
             name: 'lastname',
             type: 'input'
+        },
+        {
+            message: 'Please choose a role for employee',
+            name: 'rolechoice',
+            type: 'list',
+            choices: [
+                'Hiring Mananger',
+                'Personnel Manager',
+                'Junior Software Engineer',
+                'Products Engineer',
+                'Marketing Analyst',
+                'Sales Associate',
+                'Cusomter Service Representative',
+                'Administrative Assistant',
+                'Office clerk'
+            ]
+        },
+        {
+            message: 'Please enter manager ID',
+            name: 'managerchoice',
+            type: 'list',
+            choices: [
+                'None',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5'
+            ]
         }
     ]).then((data) => {
         const firstName = data.firstname;
         const lastName =data.lastname;
+        const roleChoice = data.rolechoice;
+        const manangerChoice = data.managerchoice;
         
         // the question marks serve as placeholders
-        const sql = "INSERT INTO employee (first_name, last_name) VALUES (?,?)";
+        const sql = "INSERT INTO employee_role (first_name, last_name, title) VALUES (?,?,?)";
 
-        db.query(sql, [firstName, lastName] ,(err, results) => {
+        db.query(sql, [firstName, lastName, roleChoice] ,(err, results) => {
             if (err) {
                 console.log(err);
             } else {
-                viewEmployee()
+                viewEmployee();
+                initialQuestions();
             }
         })
     })
@@ -133,13 +166,31 @@ const updateRole = () => {
 }
 
 const viewRoles = () => {
-    const sql = "SELECT title FROM employee_role";
+    const sql = "SELECT id, title, salary FROM employee_role";
 
     db.query(sql, (err, results) => {
         if (err) {
             console.log(err);
         } else {
-            console.table(results)
+            console.table(results);
+            initialQuestions();
         }
     })
+}
+
+const viewDepartments = () => {
+    const sql = "SELECT * FROM departments";
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.table(results);
+            initialQuestions();
+        }
+    })
+}
+
+const quit = () => {
+    console.log("Goodbye!");
 }

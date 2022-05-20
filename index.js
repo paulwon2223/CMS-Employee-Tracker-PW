@@ -47,6 +47,7 @@ const initialQuestions = () => {
           "Add Role",
           "View All Departments",
           "Add Departments",
+          "Delete Employee",
           "Quit",
         ],
       },
@@ -62,7 +63,7 @@ const initialQuestions = () => {
           break;
 
         case "Add Employee":
-          //   addEmployee();
+          addEmployee();
 
           break;
 
@@ -88,6 +89,11 @@ const initialQuestions = () => {
 
         case "Add Departments":
           addDepartments();
+
+          break;
+
+        case "Delete Employee":
+          deleteEmployee();
 
           break;
 
@@ -140,8 +146,10 @@ const addEmployee = () => {
   db.query(sql, (err, results) => {
     if (err) throw err;
 
-    console.log(results.map((x) => x.title));
-    const roles = results.map((x) => x.title);
+    const employeeRoles = results.map((x) => ({
+      name: x.title,
+      value: x.department_id,
+    }));
 
     inq
       .prompt([
@@ -159,13 +167,13 @@ const addEmployee = () => {
           message: "Please select a role for employee",
           name: "rolechoice",
           type: "list",
-          choices: roles,
+          choices: employeeRoles,
         },
         {
           message: "Please enter manager ID",
           name: "managerchoice",
           type: "list",
-          choices: ["None", "1", "2", "3", "4", "5"],
+          choices: ["1", "2", "3", "4", "5"],
         },
       ])
       .then((data) => {
@@ -174,14 +182,43 @@ const addEmployee = () => {
         const roleChoice = data.rolechoice;
         const managerChoice = data.managerchoice;
 
-        const sql = "INSERT INTO";
+        const sql =
+          "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)";
+
+        db.query(
+          sql,
+          [firstName, lastName, roleChoice, managerChoice],
+          (err, results) => {
+            if (err) throw err;
+            console.log(
+              `${firstName} ${lastName} successfully added to employee database`
+            );
+            initialQuestions();
+          }
+        );
       });
   });
 };
 
-// const updateRole = () => {
+const updateRole = () => {
+  console.log(`
+    ______________________________________
+    |                                    |
+    |        =================           |
+    |     ** Updating Employee **        |
+    |        =================           |
+    |                                    |
+    |____________________________________|
+    `);
 
-// }
+  const sql = "SELECT * FROM employee";
+
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+
+    const employee = results.map((x) => x.title);
+  });
+};
 
 // displays all the roles
 const viewRoles = () => {
@@ -225,8 +262,11 @@ const addRole = () => {
     if (err) {
       console.log(err);
     } else {
-      console.log(results.map((x) => x.department_name));
-      const deparmentList = results.map((x) => x.department_name);
+      // console.log(results.map((x) => x.department_name));
+      const deparmentList = results.map((x) => ({
+        name: x.department_name,
+        value: x.id,
+      }));
       inq
         .prompt([
           {
@@ -237,7 +277,7 @@ const addRole = () => {
           {
             message: "Please enter the salary",
             name: "salary",
-            type: "input",
+            type: "number",
           },
           {
             message: "Which department does the role belong to?",
@@ -247,6 +287,7 @@ const addRole = () => {
           },
         ])
         .then((data) => {
+          console.log(data);
           const roles = data.newrole;
           const salary = data.salary;
           const choices = data.roledepartment;
@@ -258,8 +299,7 @@ const addRole = () => {
             if (err) {
               console.log(err);
             } else {
-              console.log("Success");
-              viewRoles();
+              console.log(`${roles} successfully added employee roles!`);
               initialQuestions();
             }
           });
@@ -270,7 +310,7 @@ const addRole = () => {
 
 // adds department to list of departments
 const addDepartments = () => {
-    console.log(`
+  console.log(`
     ______________________________________
     |                                    |
     |       ====================         |
@@ -297,8 +337,7 @@ const addDepartments = () => {
         if (err) {
           console.log(err);
         } else {
-          console.log("Department successfully added!");
-          viewDepartments();
+          console.log(`${deparmentChoice} successfully added to departments`);
           initialQuestions();
         }
       });
@@ -307,7 +346,7 @@ const addDepartments = () => {
 
 // displays all departments
 const viewDepartments = () => {
-    console.log(`
+  console.log(`
     ______________________________________
     |                                    |
     |         ===============            |
@@ -326,6 +365,52 @@ const viewDepartments = () => {
       console.table(results);
       initialQuestions();
     }
+  });
+};
+
+const deleteEmployee = () => {
+  console.log(`
+  ______________________________________
+  |                                    |
+  |         =================          |
+  |      ** Deleting Employee **       |
+  |         =================          |
+  |                                    |
+  |____________________________________|
+  `);
+
+  const sql = "SELECT first_name, last_name, CONCAT (first_name, ' ', last_name) full_name FROM employee ORDER BY full_name";
+
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+
+    // console.log(results.map((x) => x.full_name));
+    // console.log(results);
+
+    const employeeName = results.map((x) => ({
+      name: x.full_name,
+      value: x.id
+    }));
+    inq
+      .prompt([
+        {
+          message: "Which employee would you like to remove?",
+          name: "deleteEmployee",
+          type: "list",
+          choices: employeeName
+        }
+      ]).then((data) => {
+        const removeEmployee = data.deleteEmployee;
+
+        const sql = "DELETE FROM employee WHERE id=?"
+        
+        db.query(sql, [removeEmployee], (err, results) => {
+          if (err) throw err;
+
+          console.log(`${removeEmployee} has successfully been deleted from employee database`);
+        })
+
+      })
   });
 };
 

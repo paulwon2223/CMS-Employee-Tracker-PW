@@ -68,7 +68,7 @@ const initialQuestions = () => {
           break;
 
         case "Update Employee Role":
-          // updateRole();
+          updateRole();
 
           break;
 
@@ -211,13 +211,36 @@ const updateRole = () => {
     |____________________________________|
     `);
 
-  const sql = "SELECT * FROM employee";
+  const sql = "SELECT id, first_name, last_name, CONCAT (first_name, ' ', last_name) full_name FROM employee ORDER BY full_name";
 
   db.query(sql, (err, results) => {
     if (err) throw err;
 
-    const employee = results.map((x) => x.title);
-  });
+    const removedName = results.map((x) => ({
+      name: x.full_name,
+      value: x.id
+    }));
+    inq
+      .prompt([
+        {
+          message: 'Which employee would you like to update?',
+          name: 'updateEmployee',
+          type: 'list',
+          choices: removedName
+        },
+        {
+          message: 'Which update would you like to make?',
+          name: 'updateChoice',
+          type: 'list',
+          choices: [
+            "Update Salary",
+            "Change Role"
+          ]
+        }
+      ]).then((data) => {
+        
+      })
+  })
 };
 
 // displays all the roles
@@ -379,7 +402,7 @@ const deleteEmployee = () => {
   |____________________________________|
   `);
 
-  const sql = "SELECT first_name, last_name, CONCAT (first_name, ' ', last_name) full_name FROM employee ORDER BY full_name";
+  const sql = "SELECT id, first_name, last_name, CONCAT (first_name, ' ', last_name) full_name FROM employee ORDER BY full_name";
 
   db.query(sql, (err, results) => {
     if (err) throw err;
@@ -407,7 +430,8 @@ const deleteEmployee = () => {
         db.query(sql, [removeEmployee], (err, results) => {
           if (err) throw err;
 
-          console.log(`${removeEmployee} has successfully been deleted from employee database`);
+          console.log(`Employee successfully removed`);
+          initialQuestions();
         })
 
       })

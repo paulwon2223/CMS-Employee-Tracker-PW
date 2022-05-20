@@ -42,12 +42,14 @@ const initialQuestions = () => {
         choices: [
           "View All Employees",
           "Add Employee",
+          "Delete Employee",
           "Update Employee Role",
           "View All Roles",
           "Add Role",
+          "Delete Role",
           "View All Departments",
           "Add Departments",
-          "Delete Employee",
+          "Delete Department",
           "Quit",
         ],
       },
@@ -67,6 +69,11 @@ const initialQuestions = () => {
 
           break;
 
+        case "Delete Employee":
+          deleteEmployee();
+
+          break;
+
         case "Update Employee Role":
           updateRole();
 
@@ -82,6 +89,11 @@ const initialQuestions = () => {
 
           break;
 
+        case "Delete Role":
+          deleteRole();
+
+          break;
+
         case "View All Departments":
           viewDepartments();
 
@@ -92,9 +104,8 @@ const initialQuestions = () => {
 
           break;
 
-        case "Delete Employee":
-          deleteEmployee();
-
+        case "Delete Department":
+          deleteDepartment();
           break;
 
         case "Quit":
@@ -105,7 +116,9 @@ const initialQuestions = () => {
     });
 };
 
-// displays all the employees
+// ---------------------- VIEW FUNCTIONS ---------------------- //
+
+// displays all employees
 const viewEmployee = () => {
   console.log(`
     ______________________________________
@@ -120,16 +133,60 @@ const viewEmployee = () => {
   const sql = "SELECT * FROM employee";
 
   db.query(sql, (err, results) => {
-    if (err) {
-      console.error("there is an error", err);
-    } else {
-      console.table(results);
-      initialQuestions();
-    }
+    if (err) throw err;
+
+    console.table(results);
+    initialQuestions();
   });
 };
 
-// adding an employee
+// displays all the roles
+const viewRoles = () => {
+  console.log(`
+    ______________________________________
+    |                                    |
+    |         ================           |
+    |        ** Viewing Roles **         |
+    |         ================           |
+    |                                    |
+    |____________________________________|
+    `);
+
+  const sql = "SELECT id, title, salary FROM employee_role";
+
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+
+    console.table(results);
+    initialQuestions();
+  });
+};
+
+// displays all departments
+const viewDepartments = () => {
+  console.log(`
+    ______________________________________
+    |                                    |
+    |         ===============            |
+    |        ** DEPARTMENTS **           |
+    |         ===============            |
+    |                                    |
+    |____________________________________|
+    `);
+
+  const sql = "SELECT * FROM departments";
+
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+
+    console.table(results);
+    initialQuestions();
+  });
+};
+
+// ---------------------- ADD FUNCTIONS ---------------------- //
+
+// adds new employee to emplyee table
 const addEmployee = () => {
   console.log(`
     ______________________________________
@@ -190,6 +247,7 @@ const addEmployee = () => {
           [firstName, lastName, roleChoice, managerChoice],
           (err, results) => {
             if (err) throw err;
+
             console.log(
               `${firstName} ${lastName} successfully added to employee database`
             );
@@ -200,74 +258,7 @@ const addEmployee = () => {
   });
 };
 
-const updateRole = () => {
-  console.log(`
-    ______________________________________
-    |                                    |
-    |        =================           |
-    |     ** Updating Employee **        |
-    |        =================           |
-    |                                    |
-    |____________________________________|
-    `);
-
-  const sql = "SELECT id, first_name, last_name, CONCAT (first_name, ' ', last_name) full_name FROM employee ORDER BY full_name";
-
-  db.query(sql, (err, results) => {
-    if (err) throw err;
-
-    const removedName = results.map((x) => ({
-      name: x.full_name,
-      value: x.id
-    }));
-    inq
-      .prompt([
-        {
-          message: 'Which employee would you like to update?',
-          name: 'updateEmployee',
-          type: 'list',
-          choices: removedName
-        },
-        {
-          message: 'Which update would you like to make?',
-          name: 'updateChoice',
-          type: 'list',
-          choices: [
-            "Update Salary",
-            "Change Role"
-          ]
-        }
-      ]).then((data) => {
-        
-      })
-  })
-};
-
-// displays all the roles
-const viewRoles = () => {
-  console.log(`
-    ______________________________________
-    |                                    |
-    |         ================           |
-    |        ** Viewing Roles **         |
-    |         ================           |
-    |                                    |
-    |____________________________________|
-    `);
-
-  const sql = "SELECT id, title, salary FROM employee_role";
-
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.table(results);
-      initialQuestions();
-    }
-  });
-};
-
-// adds role to the list of roles
+// adds new role to employee role table
 const addRole = () => {
   console.log(`
     ______________________________________
@@ -331,7 +322,7 @@ const addRole = () => {
   });
 };
 
-// adds department to list of departments
+// adds new department departments table
 const addDepartments = () => {
   console.log(`
     ______________________________________
@@ -367,30 +358,9 @@ const addDepartments = () => {
     });
 };
 
-// displays all departments
-const viewDepartments = () => {
-  console.log(`
-    ______________________________________
-    |                                    |
-    |         ===============            |
-    |        ** DEPARTMENTS **           |
-    |         ===============            |
-    |                                    |
-    |____________________________________|
-    `);
+// ---------------------- DELETE FUNCTIONS ---------------------- //
 
-  const sql = "SELECT * FROM departments";
-
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.table(results);
-      initialQuestions();
-    }
-  });
-};
-
+// deletes existing employee from employee table
 const deleteEmployee = () => {
   console.log(`
   ______________________________________
@@ -402,7 +372,8 @@ const deleteEmployee = () => {
   |____________________________________|
   `);
 
-  const sql = "SELECT id, first_name, last_name, CONCAT (first_name, ' ', last_name) full_name FROM employee ORDER BY full_name";
+  const sql =
+    "SELECT id, first_name, last_name, CONCAT (first_name, ' ', last_name) full_name FROM employee ORDER BY full_name";
 
   db.query(sql, (err, results) => {
     if (err) throw err;
@@ -412,7 +383,7 @@ const deleteEmployee = () => {
 
     const employeeName = results.map((x) => ({
       name: x.full_name,
-      value: x.id
+      value: x.id,
     }));
     inq
       .prompt([
@@ -420,23 +391,158 @@ const deleteEmployee = () => {
           message: "Which employee would you like to remove?",
           name: "deleteEmployee",
           type: "list",
-          choices: employeeName
-        }
-      ]).then((data) => {
+          choices: employeeName,
+        },
+      ])
+      .then((data) => {
         const removeEmployee = data.deleteEmployee;
 
-        const sql = "DELETE FROM employee WHERE id=?"
-        
+        const sql = "DELETE FROM employee WHERE id=?";
+
         db.query(sql, [removeEmployee], (err, results) => {
           if (err) throw err;
 
           console.log(`Employee successfully removed`);
           initialQuestions();
-        })
-
-      })
+        });
+      });
   });
 };
+
+// deletes existing role from employee role table
+const deleteRole = () => {
+  console.log(`
+  ______________________________________
+  |                                    |
+  |         =================          |
+  |       ** Deleting Role **          |
+  |         =================          |
+  |                                    |
+  |____________________________________|
+  `);
+
+  const sql = "SELECT id, title FROM emploee_role";
+
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+
+    const roleList = results.map((x) => ({
+      name: x.title,
+      value: x.id,
+    }));
+    inq
+      .prompt([
+        {
+          message: "Which role would you like to delete?",
+          name: "removeRole",
+          type: "list",
+          choices: roleList,
+        },
+      ])
+      .then((data) => {
+        const removingRole = data.removeRole;
+
+        const sql = "DELETE FROM employee_role WHERE ID=?";
+
+        db.query(sql, [removingRole], (err, results) => {
+          if (err) throw err;
+
+          console.log(`Role has been successfully removed`);
+          initialQuestions();
+        });
+      });
+  });
+};
+
+// deletes existing department from department table
+const deleteDepartment = () => {
+  console.log(`
+  ______________________________________
+  |                                    |
+  |        ==================          |
+  |     ** Deleting Department **      |
+  |        ==================          |
+  |                                    |
+  |____________________________________|
+  `);
+
+  const sql = "SELECT * FROM departments";
+
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+
+    const departmentList = results.map((x) => ({
+      name: x.department_name,
+      value: x.id,
+    }));
+    inq
+      .prompt([
+        {
+          message: "Which department would you like to delete?",
+          name: "deleteDepartment",
+          type: "list",
+          choices: departmentList,
+        },
+      ])
+      .then((data) => {
+        const removeDepartment = data.deleteDepartment;
+
+        const sql = "DELETE FROM departments WHERE id=?";
+
+        db.query(sql, [removeDepartment], (err, results) => {
+          if (err) throw err;
+
+          console.log("Department successfully removed");
+          initialQuestions();
+        });
+      });
+  });
+};
+
+// ---------------------- UPDATE FUNCTIONS ---------------------- //
+
+// updates existing roles
+const updateRole = () => {
+  console.log(`
+    ______________________________________
+    |                                    |
+    |        =================           |
+    |     ** Updating Employee **        |
+    |        =================           |
+    |                                    |
+    |____________________________________|
+    `);
+
+  const sql =
+    "SELECT id, first_name, last_name, CONCAT (first_name, ' ', last_name) full_name FROM employee ORDER BY full_name";
+
+  db.query(sql, (err, results) => {
+    if (err) throw err;
+
+    const removedName = results.map((x) => ({
+      name: x.full_name,
+      value: x.id,
+    }));
+    inq
+      .prompt([
+        {
+          message: "Which employee would you like to update?",
+          name: "updateEmployee",
+          type: "list",
+          choices: removedName,
+        },
+        {
+          message: "Which update would you like to make?",
+          name: "updateChoice",
+          type: "list",
+          choices: ["Update Salary", "Change Role"],
+        },
+      ])
+      .then((data) => {});
+  });
+};
+
+// ---------------------- QUIT FUNCTION ------------------------- //
 
 // ends the application
 const quit = () => {

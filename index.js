@@ -4,6 +4,12 @@ const mysql = require("mysql2");
 const inq = require("inquirer");
 const cTable = require("console.table"); 
 
+// font colors for console
+const cyanColor = "\x1b[36m%s\x1b[0m";
+const redColor = "\x1b[31m";
+const lineBreak = "\n";
+
+
 // connecting to database
 const db = mysql.createConnection({
   host: "localhost",
@@ -15,14 +21,15 @@ db.connect(function (err) {
   if (err) {
     console.error("there is an error", err);
   } else {
-    console.log("Database is connected successfully!");
+
+    console.log(redColor, "Database is connected successfully!");
     // invoking main function
     initialQuestions();
   }
 });
 
 const welcomeTable = () => {
-  console.log(`
+  console.log(cyanColor, `
   ______________________________________
   |                                    |
   |        ==================          |
@@ -35,7 +42,7 @@ const welcomeTable = () => {
    `);
 }
 
-// initiates the "Employee Tracker Box upon start"
+// initiates the "Employee Tracker Box" upon start
 welcomeTable();
 
 // asks first question and generates its own functions accordingly
@@ -132,7 +139,7 @@ const initialQuestions = () => {
 
 // displays all employees
 const viewEmployee = () => {
-  console.log(`
+  console.log(cyanColor, `
     ______________________________________
     |                                    |
     |         ================           |
@@ -154,7 +161,7 @@ const viewEmployee = () => {
 
 // displays all the roles
 const viewRoles = () => {
-  console.log(`
+  console.log(cyanColor, `
     ______________________________________
     |                                    |
     |         ================           |
@@ -176,7 +183,7 @@ const viewRoles = () => {
 
 // displays all departments
 const viewDepartments = () => {
-  console.log(`
+  console.log(cyanColor`
     ______________________________________
     |                                    |
     |         ===============            |
@@ -203,7 +210,7 @@ const viewDepartments = () => {
 
 // adds new employee to emplyee table
 const addEmployee = () => {
-  console.log(`
+  console.log(cyanColor, `
     ______________________________________
     |                                    |
     |         ================           |
@@ -264,9 +271,8 @@ const addEmployee = () => {
             if (err) throw err;
 
             console.log(
-              `${firstName} ${lastName} successfully added to employee database`
+              redColor, `${firstName} ${lastName} successfully added to employee database`
             );
-           const lineBreak = '\n';
 
            lineBreak;
             viewEmployee();
@@ -278,7 +284,7 @@ const addEmployee = () => {
 
 // adds new role to employee role table
 const addRole = () => {
-  console.log(`
+  console.log(cyanColor, `
     ______________________________________
     |                                    |
     |         ================           |
@@ -331,7 +337,7 @@ const addRole = () => {
             if (err) {
               console.log(err);
             } else {
-              console.log(`${roles} successfully added employee roles!`);
+              console.log(redColor, `${roles} successfully added employee roles!`);
               initialQuestions();
             }
           });
@@ -342,7 +348,7 @@ const addRole = () => {
 
 // adds new department departments table
 const addDepartments = () => {
-  console.log(`
+  console.log(cyanColor, `
     ______________________________________
     |                                    |
     |       ====================         |
@@ -369,7 +375,7 @@ const addDepartments = () => {
         if (err) {
           console.log(err);
         } else {
-          console.log(`${deparmentChoice} successfully added to departments`);
+          console.log(redColor, `${deparmentChoice} successfully added to departments`);
           initialQuestions();
         }
       });
@@ -382,7 +388,7 @@ const addDepartments = () => {
 
 // deletes existing employee from employee table
 const deleteEmployee = () => {
-  console.log(`
+  console.log(cyanColor, `
   ______________________________________
   |                                    |
   |         =================          |
@@ -422,7 +428,7 @@ const deleteEmployee = () => {
         db.query(sql, [removeEmployee], (err, results) => {
           if (err) throw err;
 
-          console.log(`Employee successfully removed`);
+          console.log(redColor, `Employee successfully removed`);
           initialQuestions();
         });
       });
@@ -431,7 +437,7 @@ const deleteEmployee = () => {
 
 // deletes existing role from employee role table
 const deleteRole = () => {
-  console.log(`
+  console.log(cyanColor, `
   ______________________________________
   |                                    |
   |         =================          |
@@ -466,7 +472,7 @@ const deleteRole = () => {
         db.query(sql, [removeRole], (err, results) => {
           if (err) throw err;
 
-          console.log("Department successfully removed");
+          console.log(redColor, "Department successfully removed");
           initialQuestions();
         });
       });
@@ -475,7 +481,7 @@ const deleteRole = () => {
 
 // deletes existing department from department table
 const deleteDepartment = () => {
-  console.log(`
+  console.log(cyanColor, `
   ______________________________________
   |                                    |
   |        ==================          |
@@ -511,7 +517,7 @@ const deleteDepartment = () => {
         db.query(sql, [removeDepartment], (err, results) => {
           if (err) throw err;
 
-          console.log("Department successfully removed");
+          console.log(redColor, "Department successfully removed");
           initialQuestions();
         });
       });
@@ -524,7 +530,7 @@ const deleteDepartment = () => {
 
 // updates existing roles
 const updateRole = () => {
-  console.log(`
+  console.log(cyanColor, `
     ______________________________________
     |                                    |
     |        =================           |
@@ -568,7 +574,7 @@ const updateRole = () => {
 
 // ends the application
 const quit = () => {
-  console.log(`
+  console.log(cyanColor, `
     ______________________________________
     |                                    |
     |          ==============            |

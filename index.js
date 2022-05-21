@@ -2,16 +2,15 @@
 require("dotenv").config();
 const mysql = require("mysql2");
 const inq = require("inquirer");
-const cTable = require("console.table");
+const cTable = require("console.table"); 
 
 // connecting to database
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: process.env.DB_PASSWORD,
-  database: "employees_db",
+  database: "employees_db"
 });
-
 db.connect(function (err) {
   if (err) {
     console.error("there is an error", err);
@@ -22,17 +21,25 @@ db.connect(function (err) {
   }
 });
 
+const welcomeTable = () => {
+  console.log(`
+  ______________________________________
+  |                                    |
+  |        ==================          |
+  |      ** Employer Tracker **        |
+  |        ==================          |
+  |                                    |
+  |____________________________________|
+
+  
+   `);
+}
+
+// initiates the "Employee Tracker Box upon start"
+welcomeTable();
+
 // asks first question and generates its own functions accordingly
 const initialQuestions = () => {
-  console.log(`
-    ______________________________________
-    |                                    |
-    |        ==================          |
-    |      ** Employer Tracker **        |
-    |        ==================          |
-    |                                    |
-    |____________________________________|
-    `);
   inq
     .prompt([
       {
@@ -116,7 +123,12 @@ const initialQuestions = () => {
     });
 };
 
-// ---------------------- VIEW FUNCTIONS ---------------------- //
+
+
+
+// ------------------------- VIEW FUNCTIONS ------------------------- //
+
+
 
 // displays all employees
 const viewEmployee = () => {
@@ -184,7 +196,10 @@ const viewDepartments = () => {
   });
 };
 
-// ---------------------- ADD FUNCTIONS ---------------------- //
+
+
+
+// ------------------------- ADD FUNCTIONS ------------------------- //
 
 // adds new employee to emplyee table
 const addEmployee = () => {
@@ -251,7 +266,10 @@ const addEmployee = () => {
             console.log(
               `${firstName} ${lastName} successfully added to employee database`
             );
-            initialQuestions();
+           const lineBreak = '\n';
+
+           lineBreak;
+            viewEmployee();
           }
         );
       });
@@ -358,7 +376,9 @@ const addDepartments = () => {
     });
 };
 
-// ---------------------- DELETE FUNCTIONS ---------------------- //
+
+
+// ------------------------- DELETE FUNCTIONS ------------------------- //
 
 // deletes existing employee from employee table
 const deleteEmployee = () => {
@@ -420,8 +440,7 @@ const deleteRole = () => {
   |                                    |
   |____________________________________|
   `);
-
-  const sql = "SELECT id, title FROM emploee_role";
+  const sql = "SELECT * FROM employee_role";
 
   db.query(sql, (err, results) => {
     if (err) throw err;
@@ -434,25 +453,25 @@ const deleteRole = () => {
       .prompt([
         {
           message: "Which role would you like to delete?",
-          name: "removeRole",
+          name: "deleteRole",
           type: "list",
           choices: roleList,
         },
       ])
       .then((data) => {
-        const removingRole = data.removeRole;
+        const removeRole = data.deleteRole;
 
-        const sql = "DELETE FROM employee_role WHERE ID=?";
+        const sql = "DELETE FROM employee_role WHERE id=?";
 
-        db.query(sql, [removingRole], (err, results) => {
+        db.query(sql, [removeRole], (err, results) => {
           if (err) throw err;
 
-          console.log(`Role has been successfully removed`);
+          console.log("Department successfully removed");
           initialQuestions();
         });
       });
   });
-};
+}
 
 // deletes existing department from department table
 const deleteDepartment = () => {
@@ -499,7 +518,9 @@ const deleteDepartment = () => {
   });
 };
 
-// ---------------------- UPDATE FUNCTIONS ---------------------- //
+
+
+// ------------------------- UPDATE FUNCTIONS ------------------------- //
 
 // updates existing roles
 const updateRole = () => {
@@ -542,7 +563,8 @@ const updateRole = () => {
   });
 };
 
-// ---------------------- QUIT FUNCTION ------------------------- //
+
+// -------------------------- QUIT FUNCTION ----------------------------- //
 
 // ends the application
 const quit = () => {

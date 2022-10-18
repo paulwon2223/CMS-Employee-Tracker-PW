@@ -1,4 +1,4 @@
-### Homework Assignment #12: SQL Employee Tracker
+SQL Employee Tracker
 -----------------------------
 #### Overview:
 - For this assignment, I was tasked in creating a **Content Management System (CMS)** interface which will allow users to easily navigate and interact with information stored in databases. Node.js, Inquirer, MySQL, Console.Table, and Dotenv were used in the process of creating the application
